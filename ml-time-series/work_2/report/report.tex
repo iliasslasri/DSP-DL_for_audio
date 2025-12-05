@@ -5,8 +5,8 @@
 % Document title
 \title{Assignment 2 (ML for TS) - MVA}
 \author{
-Firstname Lastname \email{youremail1@mail.com} \\ % student 1
-Firstname Lastname \email{youremail2@mail.com} % student 2
+Iliass Lasri \email{iliass.lasri@telecom-paris.fr} \\ % student 1
+% Firstname Lastname \email{youremail2@mail.com} % student 2
 }
 
 \begin{document}
@@ -54,6 +54,75 @@ An estimator $\hat{\theta}_n$ is consistent if it converges in probability when 
 \end{exercise}
 
 \begin{solution}  % ANSWER HERE
+\subsection*{1.1.}
+
+The sample mean is defined as
+
+\[
+\bar{Y}_n = \frac{1}{n} \sum_{i=1}^n Y_i.
+\]
+
+\textbf{Consistency (Law of Large Numbers):}
+\[
+\bar{Y}_n \xrightarrow{P} \mu \quad \text{as } n \to \infty.
+\]
+
+\textbf{Rate of Convergence (Central Limit Theorem):}
+\[
+\sqrt{n} (\bar{Y}_n - \mu) \xrightarrow{D} \mathcal{N}(0, \sigma^2),
+\]
+which implies
+\[
+\bar{Y}_n - \mu = O_p\Big(\frac{1}{\sqrt{n}}\Big).
+\]
+
+\subsection*{1.2.}
+
+\textbf{We first compute the variance of the sample mean}
+
+Since the process is WSS, we have
+\[
+\text{Var}(\bar{Y}_n) = \text{Var}\Big(\frac{1}{n} \sum_{t=1}^n Y_t \Big) 
+= \frac{1}{n^2} \sum_{t=1}^n \sum_{s=1}^n \text{Cov}(Y_t, Y_s)
+= \frac{1}{n^2} \sum_{t=1}^n \sum_{s=1}^n \gamma(t-s).
+\]
+
+\textbf{Let's now try to bound the variance using the absolute sum of autocovariances}
+
+We can rewrite
+\[
+\text{Var}(\bar{Y}_n) = \frac{1}{n^2} \sum_{k=-(n-1)}^{n-1} (n-|k|) \gamma(k)
+\]
+where \(k = t-s\) and each lag \(k\) appears \(n-|k|\) times. Taking absolute values:
+\[
+\text{Var}(\bar{Y}_n) \le \frac{1}{n^2} \sum_{k=-(n-1)}^{n-1} n |\gamma(k)| 
+\le \frac{1}{n} \sum_{k=-\infty}^{\infty} |\gamma(k)| \,.
+\]
+
+Since \(\sum_{k=-\infty}^{\infty} |\gamma(k)| < \infty\), there exists a constant \(C > 0\) such that
+\[
+\text{Var}(\bar{Y}_n) \le \frac{C}{n}.
+\]
+
+And,
+\[
+\mathbb{E}[(\bar{Y}_n - \mu)^2] = \text{Var}(\bar{Y}_n) \le \frac{C}{n} \longrightarrow 0 \quad \text{as } n \to \infty.
+\]
+
+Since convergence in \(L^2\) implies convergence in probability, we conclude
+\[
+\bar{Y}_n \xrightarrow{P} \mu.
+\]
+
+Finally, from the bound on the variance,
+\[
+\text{Var}(\bar{Y}_n) = O\Big(\frac{1}{n}\Big),
+\]
+which implies
+\[
+\bar{Y}_n - \mu = O_p\Big(\frac{1}{\sqrt{n}}\Big),
+\]
+so the sample mean enjoys the \textbf{same rate of convergence} as in the i.i.d. case.
 
 
 \end{solution}
@@ -80,6 +149,77 @@ Wold's theorem states that any weakly stationary process can be written as the s
 \end{exercise}
 
 \begin{solution}  % ANSWER HERE
+\subsection*{2.1}
+
+Since \(\mathbb{E}[\varepsilon_t] = 0\) and linearity of expectation, we have
+\[
+\mathbb{E}[Y_t] = \mathbb{E}\Big[\sum_{k=0}^{\infty} \psi_k \varepsilon_{t-k}\Big] 
+= \sum_{k=0}^{\infty} \psi_k \underbrace{\mathbb{E}[\varepsilon_{t-k}]}_{0} = 0.
+\]
+
+\[
+\boxed{\mathbb{E}[Y_t] = 0}
+\]
+
+
+\textbf{Autocovariance of \(Y_t\)}
+
+For \(h \ge 0\), consider
+\[
+\gamma_Y(h) = \text{Cov}(Y_t, Y_{t-h}) = \mathbb{E}[Y_t Y_{t-h}] - \mathbb{E}[Y_t]\mathbb{E}[Y_{t-h}] = \mathbb{E}[Y_t Y_{t-h}].
+\]
+
+Compute the product:
+\[
+Y_t Y_{t-h} = \Big( \sum_{k=0}^{\infty} \psi_k \varepsilon_{t-k} \Big)
+\Big( \sum_{j=0}^{\infty} \psi_j \varepsilon_{t-h-j} \Big)
+= \sum_{k=0}^{\infty} \sum_{j=0}^{\infty} \psi_k \psi_j \varepsilon_{t-k} \varepsilon_{t-h-j}.
+\]
+
+Taking expectation, using that \(\varepsilon_t\) is white noise (\(\mathbb{E}[\varepsilon_t \varepsilon_s] = 0\) for \(t \neq s\), \(\sigma_\varepsilon^2\) for \(t=s\)):
+
+\[
+\mathbb{E}[Y_t Y_{t-h}] = \sum_{k=0}^{\infty} \sum_{j=0}^{\infty} \psi_k \psi_j \underbrace{\mathbb{E}[\varepsilon_{t-k} \varepsilon_{t-h-j}]}_{\sigma_\varepsilon^2 \mathbf{1}_{\{k - j = h\}}}
+= \sigma_\varepsilon^2 \sum_{k=0}^{\infty} \psi_k \psi_{k-h},
+\]
+
+where \(\psi_{m} = 0\) if \(m < 0\). Therefore, the autocovariance function is:
+
+\[
+\boxed{\gamma_Y(h) = \sigma_\varepsilon^2 \sum_{k=0}^{\infty} \psi_k \psi_{k-h}, \quad h \ge 0, \quad \gamma_Y(-h) = \gamma_Y(h)}
+\]
+
+---
+
+\textbf{Weak stationarity}
+
+A process is weakly stationary if:
+
+1. \(\mathbb{E}[Y_t]\) is constant in \(t\) → true, \(\mathbb{E}[Y_t] = 0\).  
+2. \(\text{Cov}(Y_t, Y_{t-h}) = \gamma_Y(h)\) depends only on lag \(h\) → true, as shown above.  
+3. \(\text{Var}(Y_t) = \gamma_Y(0) < \infty\) → true, because \(\sum_k \psi_k^2 < \infty\) and \(\text{Var}(Y_t) = \sigma_\varepsilon^2 \sum_k \psi_k^2 < \infty\).
+
+\(\implies \{Y_t\}\) is a \textbf{weakly stationary} process.
+
+\subsection*{2.2}
+\textbf{Power Spectrum of MA($\infty$) process:}
+
+The autocovariance of the MA($\infty$) process is
+\[
+\gamma_Y(h) = \sigma_\varepsilon^2 \sum_{k=0}^{\infty} \psi_k \psi_{k-|h|}.
+\]
+
+The power spectrum is the Fourier transform:
+\[
+S(f) = \sum_{h=-\infty}^{\infty} \gamma_Y(h) e^{-2\pi i f h} 
+= \sigma_\varepsilon^2 \sum_{k=0}^{\infty} \psi_k \sum_{j=0}^{\infty} \psi_j e^{-2\pi i f (k-j)}.
+\]
+
+Factor the sums:
+\[
+S(f) = \sigma_\varepsilon^2 \left( \sum_{k=0}^{\infty} \psi_k e^{-2\pi i f k} \right) \left( \sum_{j=0}^{\infty} \psi_j e^{-2\pi i f j} \right)^* 
+= \sigma_\varepsilon^2 \, \big| \phi(e^{-2\pi i f}) \big|^2,
+\]
 
 \end{solution}
 
@@ -121,15 +261,80 @@ Properties on the roots of this polynomial drive the behavior of this process.
 \end{exercise}
 
 \begin{solution}  % ANSWER HERE
+\subsection*{3.1}
+% \textbf{Solve Yule-Walker equations}
+
+The autocovariance function \(\gamma(\tau) = \text{Cov}(Y_t, Y_{t-\tau})\) satisfies the Yule-Walker recursion:
+\[
+\gamma(\tau) = \phi_1 \gamma(\tau-1) + \phi_2 \gamma(\tau-2), \quad \tau \ge 1,
+\]
+with \(\gamma(0)\) determined by
+\[
+\gamma(0) = \phi_1 \gamma(1) + \phi_2 \gamma(2) + \sigma_\varepsilon^2.
+\]
+
+% ---
+
+% \textbf{Solve the linear difference equation using roots}
+
+The general solution of the second-order linear difference equation is:
+\[
+\gamma(\tau) = A r_1^{-|\tau|} + B r_2^{-|\tau|}, \quad \tau \in \mathbb{Z},
+\]
+where \(A\) and \(B\) are constants determined by \(\gamma(0)\) and \(\gamma(1)\).
+
+% - \(r_1, r_2\) are the roots of \(\phi(z) = 0 \implies 1 - \phi_1 z - \phi_2 z^2 = 0\).  
+% - Since \(|r_i| > 1\), the process is stationary and the autocovariance decays geometrically with \(|\tau|\).
+
+
+Using \(\gamma(0)\) and \(\gamma(1)\):
+
+\[
+\begin{cases}
+\gamma(0) = A + B, \\
+\gamma(1) = A r_1^{-1} + B r_2^{-1},
+\end{cases}
+\quad \Rightarrow \quad
+A = \frac{\gamma(1) - \gamma(0)/r_2}{1/r_1 - 1/r_2}, \quad
+B = \gamma(0) - A.
+\]
+
+Thus the autocovariance coefficients are completely determined by the roots \(r_1, r_2\) and \(\sigma_\varepsilon^2\).
+
+\subsection*{3.2}
+Looking at the two correlograms:
+\begin{itemize}
+    \item First AR(2) : The ACF oscillates above and below zero before decaying.
+    
+    This is a signature of complex conjugate roots. Complex roots cause the autocorrelation to decay geometrically with a sinusoidal component, producing oscillations.
+    \item Second AR(2) : The ACF decays smoothly to zero without oscillating.
+    
+    This indicates real roots, because real roots produce a monotone geometric decay of the autocorrelation.
+\end{itemize}
+
+\subsection*{3.3}
+
+\[
+S(f) = \sigma_\varepsilon^2 \left| 1 - \phi_1 e^{-2\pi i f} - \phi_2 e^{-4\pi i f} \right|^2.
+\]
+
+\subsection*{3.3}
+Since the AR(2) has complex roots, the process exhibits oscillatory behavior. The periodogram shows a peak.
+
+\subsection*{3.4}
+\[
+\phi_1 = \frac{2 \cos \theta}{r}, \quad \phi_2 = - \frac{1}{r^2}.
+\]
+
 
 \begin{figure}
     \centering
     \begin{minipage}[t]{0.45\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{images/signal.png}}
     \centerline{Signal}
     \end{minipage}
     \hfill
-    \begin{minipage}[t]{0.45\textwidth}    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \begin{minipage}[t]{0.45\textwidth}    \centerline{\includegraphics[width=\textwidth]{images/welch.png}}
     \centerline{Periodogram}
     \end{minipage}
     \caption{AR(2) process}\label{fig:q-ar-2}
@@ -166,18 +371,23 @@ The dictionary is defined as the concatenation of all shifted MDCDT atoms for sc
 
 \begin{figure}
     \centering
-    \begin{minipage}[t]{0.45\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
-    \centerline{Norms of the successive residuals}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.45\textwidth}    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
-    \centerline{Reconstruction with 10 atoms}
-    \end{minipage}
-    \caption{Question 4}
+    \includegraphics[width=0.8\linewidth]{images/norm_residuals.png}
+    \caption{Norms of the successive residuals}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/reconstructed.png}
+    \caption{Reconstruction with 10 atoms}
+    \label{fig:placeholder}
 \end{figure}
 
 
+The 10-atom MDCT sparse representation successfully extracted the dominant, low-frequency structure of the original signal, removing the noise present in the signal.
+
+However, the chosen dictionary and the constraint of only 10 atoms were insufficient to accurately represent the complex, high-frequency, time-localized content present in the initial segment of the signal.
+    
 
 \end{solution}
 
