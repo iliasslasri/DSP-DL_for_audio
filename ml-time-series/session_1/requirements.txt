@@ -1,0 +1,10 @@
+numpy
+pandas
+matplotlib
+aeon
+dtw-python
+scipy
+scikit-learn
+git+https://github.com/alphacsc/alphacsc.git
+statsmodels
+ipython
